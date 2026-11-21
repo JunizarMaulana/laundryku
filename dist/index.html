@@ -18,7 +18,7 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link href="assets/app.css?v=4" rel="stylesheet" />
+    <link href="assets/app.css?v=5" rel="stylesheet" />
   </head>
   <body>
     <div id="toast" class="toast-box" role="status" aria-live="polite"></div>
@@ -142,9 +142,9 @@
     <div id="appScreen" class="app-shell d-none">
       <aside class="sidebar" id="sidebar">
         <div class="brand-lockup sidebar-brand">
-          <span class="brand-mark">LK</span>
+          <span class="brand-mark">L</span>
           <div>
-            <strong>LaundryKu</strong><small id="roleLabel">Admin</small>
+            <strong>LaundryKu</strong><small id="roleLabel">Workspace</small>
           </div>
         </div>
         <div class="user-card">
@@ -173,8 +173,14 @@
             <h1 id="pageTitle">Dashboard</h1>
           </div>
           <div class="top-actions">
-            <span class="prototype-pill">SUPABASE</span
-            ><button class="icon-btn" title="Notifikasi">●</button>
+            <span class="prototype-pill"><i></i> Sinkron aktif</span
+            ><button
+              class="icon-btn"
+              title="Pusat bantuan"
+              aria-label="Pusat bantuan"
+            >
+              ?
+            </button>
           </div>
         </header>
         <div id="pageContent" class="page-content"></div>
@@ -194,6 +200,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="assets/app.js?v=4"></script>
+    <script type="module" src="assets/app.js?v=5"></script>
   </body>
 </html>

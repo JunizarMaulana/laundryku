@@ -121,6 +121,7 @@ async function syncSession(session) {
   if (!session?.user) {
     currentUser = null;
     profile = null;
+    document.body.classList.remove("app-mode");
     $("#appScreen").classList.add("d-none");
     $("#loginScreen").classList.remove("d-none");
     return;
@@ -137,6 +138,7 @@ async function syncSession(session) {
       "Profil belum tersedia. Pastikan schema sudah dijalankan.",
     );
   profile = data;
+  document.body.classList.add("app-mode");
   $("#loginScreen").classList.add("d-none");
   $("#appScreen").classList.remove("d-none");
   $("#userName").textContent = profile.nama;
