@@ -1243,6 +1243,157 @@ body {
   }
 }
 
+/* Feature icon system */
+.ui-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex: 0 0 auto;
+}
+.app-mode .nav-item {
+  --feature-bg: rgba(255, 255, 255, 0.08);
+  --feature-color: #dce8d8;
+}
+.app-mode .nav-item[data-page="dashboard"] {
+  --feature-bg: #dff0ae;
+  --feature-color: #436c27;
+}
+.app-mode .nav-item[data-page="services"] {
+  --feature-bg: #cceeff;
+  --feature-color: #28779b;
+}
+.app-mode .nav-item[data-page="orders"],
+.app-mode .nav-item[data-page="my-orders"] {
+  --feature-bg: #ffe3ba;
+  --feature-color: #a35d18;
+}
+.app-mode .nav-item[data-page="new-order"] {
+  --feature-bg: #c9efd4;
+  --feature-color: #2e7b4c;
+}
+.app-mode .nav-item[data-page="payments"] {
+  --feature-bg: #ddd4ff;
+  --feature-color: #6750b8;
+}
+.app-mode .nav-item[data-page="complaints"] {
+  --feature-bg: #ffd6df;
+  --feature-color: #a83f59;
+}
+.app-mode .nav-item[data-page="users"] {
+  --feature-bg: #c9f0ed;
+  --feature-color: #267a75;
+}
+.app-mode .nav-item[data-page="reports"] {
+  --feature-bg: #cde9dc;
+  --feature-color: #2e7657;
+}
+.app-mode .nav-item[data-page="profile"] {
+  --feature-bg: #e4e7eb;
+  --feature-color: #56626c;
+}
+.app-mode .nav-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  flex: 0 0 34px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  border-radius: 11px;
+  background: var(--feature-bg);
+  color: var(--feature-color);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.48),
+    0 5px 12px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.app-mode .nav-icon .ui-icon {
+  width: 18px;
+  height: 18px;
+}
+.app-mode .nav-item:hover .nav-icon,
+.app-mode .nav-item.active .nav-icon {
+  color: var(--feature-color);
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.56),
+    0 7px 16px rgba(0, 0, 0, 0.12);
+}
+.panel-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.feature-head-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  flex: 0 0 42px;
+  place-items: center;
+  border: 1px solid rgba(23, 34, 25, 0.06);
+  border-radius: 13px;
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.68),
+    0 8px 20px rgba(33, 66, 43, 0.08);
+}
+.feature-head-icon .ui-icon {
+  width: 21px;
+  height: 21px;
+}
+.feature-dashboard {
+  background: #dff0ae;
+  color: #436c27;
+}
+.feature-services {
+  background: #cceeff;
+  color: #28779b;
+}
+.feature-orders {
+  background: #ffe3ba;
+  color: #a35d18;
+}
+.feature-new-order {
+  background: #c9efd4;
+  color: #2e7b4c;
+}
+.feature-payments {
+  background: #ddd4ff;
+  color: #6750b8;
+}
+.feature-complaints {
+  background: #ffd6df;
+  color: #a83f59;
+}
+.feature-users {
+  background: #c9f0ed;
+  color: #267a75;
+}
+.feature-reports {
+  background: #cde9dc;
+  color: #2e7657;
+}
+.feature-profile {
+  background: #e4e7eb;
+  color: #56626c;
+}
+.app-mode .metric-icon .ui-icon {
+  width: 22px;
+  height: 22px;
+}
+@media (max-width: 560px) {
+  .feature-head-icon {
+    width: 38px;
+    height: 38px;
+    flex-basis: 38px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-mode .nav-icon {
+    transition: none;
+  }
+}
+
 /* Modern polish — brand depth and calmer interactive feedback */
 .welcome-shell {
   background:
@@ -2149,4 +2300,14 @@ body.app-mode {
   .app-mode .toolbar {
     align-items: stretch;
   }
+}
+
+/* Keep feature icon containers authoritative after workspace overrides. */
+.app-mode .nav-icon {
+  width: 34px;
+  height: 34px;
+  color: var(--feature-color);
+}
+.app-mode .nav-item.active .nav-icon {
+  color: var(--feature-color);
 }

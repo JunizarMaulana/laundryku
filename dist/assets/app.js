@@ -34,29 +34,52 @@ const statusClass = (value) =>
         : "blue";
 const badge = (value) =>
   `<span class="status status-${statusClass(value)}">${esc(value)}</span>`;
+const iconPaths = {
+  dashboard:
+    '<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>',
+  services:
+    '<path d="M20 13c0 4.5-3.6 8-8 8s-8-3.5-8-8c0-5.4 8-11 8-11s8 5.6 8 11Z"/><path d="M8.5 14.5a4 4 0 0 0 3.5 2"/>',
+  orders:
+    '<path d="M9 5h6"/><path d="M9 9h6"/><path d="M9 13h4"/><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z"/><path d="m15 17 2 2 4-4"/>',
+  payments:
+    '<rect x="2.5" y="5" width="19" height="14" rx="3"/><path d="M2.5 9h19"/><path d="M7 15h3"/>',
+  complaints:
+    '<path d="M21 11.5a8.4 8.4 0 0 1-9 8.5 9.8 9.8 0 0 1-4-.9L3 21l1.8-4.5A8.6 8.6 0 1 1 21 11.5Z"/><path d="M8 9h8M8 13h5"/>',
+  users:
+    '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  reports:
+    '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/><path d="m4 7 6-4 6 6 5-4"/>',
+  profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  "new-order":
+    '<path d="M6 6h15l-2 8H8L6 3H2"/><circle cx="9" cy="19" r="1.5"/><circle cx="18" cy="19" r="1.5"/><path d="M14 7v5M11.5 9.5h5"/>',
+  work: '<path d="M4 5h16v14H4z"/><path d="M8 5V3h8v2M4 10h16M10 10v2h4v-2"/>',
+  ready: '<circle cx="12" cy="12" r="9"/><path d="m8 12 2.5 2.5L16 9"/>',
+};
+const icon = (name) =>
+  `<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${iconPaths[name] || iconPaths.dashboard}</svg>`;
 const menus = {
   admin: [
-    ["dashboard", "▦", "Dashboard"],
-    ["services", "◇", "Layanan & Harga"],
-    ["orders", "▤", "Pesanan"],
-    ["payments", "◉", "Verifikasi Pembayaran"],
-    ["complaints", "□", "Keluhan"],
-    ["users", "◎", "Pengguna"],
-    ["reports", "▥", "Laporan"],
-    ["profile", "○", "Profil"],
+    ["dashboard", "dashboard", "Dashboard"],
+    ["services", "services", "Layanan & Harga"],
+    ["orders", "orders", "Pesanan"],
+    ["payments", "payments", "Verifikasi Pembayaran"],
+    ["complaints", "complaints", "Keluhan"],
+    ["users", "users", "Pengguna"],
+    ["reports", "reports", "Laporan"],
+    ["profile", "profile", "Profil"],
   ],
   pegawai: [
-    ["dashboard", "▦", "Dashboard"],
-    ["orders", "▤", "Daftar Pesanan"],
-    ["profile", "○", "Profil"],
+    ["dashboard", "dashboard", "Dashboard"],
+    ["orders", "orders", "Daftar Pesanan"],
+    ["profile", "profile", "Profil"],
   ],
   pelanggan: [
-    ["dashboard", "▦", "Dashboard"],
-    ["new-order", "+", "Pesan Laundry"],
-    ["my-orders", "▤", "Pesanan Saya"],
-    ["payments", "◉", "Pembayaran"],
-    ["complaints", "□", "Keluhan"],
-    ["profile", "○", "Profil"],
+    ["dashboard", "dashboard", "Dashboard"],
+    ["new-order", "new-order", "Pesan Laundry"],
+    ["my-orders", "orders", "Pesanan Saya"],
+    ["payments", "payments", "Pembayaran"],
+    ["complaints", "complaints", "Keluhan"],
+    ["profile", "profile", "Profil"],
   ],
 };
 let currentUser = null,
@@ -249,7 +272,7 @@ function buildMenu() {
   $("#navMenu").innerHTML = menus[profile.role]
     .map(
       ([p, i, l]) =>
-        `<button class="nav-item" data-page="${p}"><span class="nav-icon">${i}</span>${l}</button>`,
+        `<button class="nav-item" data-page="${p}"><span class="nav-icon">${icon(i)}</span><span>${l}</span></button>`,
     )
     .join("");
   $("#navMenu")
@@ -278,12 +301,16 @@ async function navigate(page) {
       `<div class="panel empty">${esc(error.message || "Gagal memuat halaman.")}</div>`;
   }
 }
-const panel = (t, s, c, a = "") =>
-  `<section class="panel"><div class="panel-head"><div><h3>${t}</h3>${s ? `<p>${s}</p>` : ""}</div>${a}</div>${c}</section>`;
+const featureName = (page) =>
+  page === "my-orders" ? "orders" : iconPaths[page] ? page : "dashboard";
+const panel = (t, s, c, a = "") => {
+  const feature = featureName(currentPage);
+  return `<section class="panel"><div class="panel-head"><div class="panel-title-wrap"><span class="feature-head-icon feature-${feature}">${icon(feature)}</span><div><h3>${t}</h3>${s ? `<p>${s}</p>` : ""}</div></div>${a}</div>${c}</section>`;
+};
 const table = (h, r) =>
   `<div class="table-responsive"><table class="table"><thead><tr>${h.map((x) => `<th>${x}</th>`).join("")}</tr></thead><tbody>${r || `<tr><td colspan="${h.length}" class="text-center text-secondary py-4">Belum ada data.</td></tr>`}</tbody></table></div>`;
 const metric = (l, v, n, i) =>
-  `<article class="metric-card"><div class="metric-label">${l}</div><div class="metric-value">${v}</div><div class="metric-note">${n}</div><div class="metric-icon">${i}</div></article>`;
+  `<article class="metric-card"><div class="metric-label">${l}</div><div class="metric-value">${v}</div><div class="metric-note">${n}</div><div class="metric-icon">${icon(i)}</div></article>`;
 const welcome = (s) =>
   `<div class="welcome"><div><h2>Halo, ${esc(profile.nama.split(" ")[0])}.</h2><p>${s}</p></div><div class="date-chip">${new Intl.DateTimeFormat("id-ID", { dateStyle: "full" }).format(new Date())}</div></div>`;
 
@@ -305,14 +332,14 @@ async function adminDashboard() {
     .order("tanggal_pesanan", { ascending: false })
     .limit(5);
   if (error) throw error;
-  return `${welcome("Ringkasan operasional LaundryKu hari ini.")}<div class="metric-grid">${metric("Total pesanan", o.count || 0, "Seluruh transaksi", "▤")}${metric("Pembayaran menunggu", p.count || 0, "Perlu diverifikasi", "◉")}${metric("Keluhan belum dijawab", k.count || 0, "Perlu ditindaklanjuti", "□")}</div>${panel("Pesanan terbaru", "Lima transaksi terakhir", table(["ID", "Pelanggan", "Layanan", "Total", "Status"], data.map((x) => `<tr><td><b>#${x.id_pesanan}</b></td><td>${esc(x.profiles?.nama)}</td><td>${esc(x.layanan?.nama_layanan)}</td><td>${rupiah(x.total_harga)}</td><td>${badge(x.status_pesanan)}</td></tr>`).join("")), '<button class="btn btn-sm btn-outline-primary" data-go="orders">Lihat semua</button>')}`;
+  return `${welcome("Ringkasan operasional LaundryKu hari ini.")}<div class="metric-grid">${metric("Total pesanan", o.count || 0, "Seluruh transaksi", "orders")}${metric("Pembayaran menunggu", p.count || 0, "Perlu diverifikasi", "payments")}${metric("Keluhan belum dijawab", k.count || 0, "Perlu ditindaklanjuti", "complaints")}</div>${panel("Pesanan terbaru", "Lima transaksi terakhir", table(["ID", "Pelanggan", "Layanan", "Total", "Status"], data.map((x) => `<tr><td><b>#${x.id_pesanan}</b></td><td>${esc(x.profiles?.nama)}</td><td>${esc(x.layanan?.nama_layanan)}</td><td>${rupiah(x.total_harga)}</td><td>${badge(x.status_pesanan)}</td></tr>`).join("")), '<button class="btn btn-sm btn-outline-primary" data-go="orders">Lihat semua</button>')}`;
 }
 async function employeeDashboard() {
   const { data, error } = await supabase
     .from("pesanan")
     .select("id_pesanan,status_pesanan");
   if (error) throw error;
-  return `${welcome("Prioritas pekerjaan untuk shift Anda.")}<div class="metric-grid">${metric("Perlu dikerjakan", data.filter((x) => x.status_pesanan !== "Selesai").length, "Pesanan aktif", "▤")}${metric("Baru diterima", data.filter((x) => x.status_pesanan === "Diterima").length, "Segera diproses", "◇")}${metric("Siap diambil", data.filter((x) => x.status_pesanan === "Siap Diambil").length, "Hubungi pelanggan", "✓")}</div>${panel("Informasi shift", "Perbarui progres melalui Daftar Pesanan.", '<p class="text-secondary mb-0">Setiap perubahan tersimpan langsung ke Supabase.</p>', '<button class="btn btn-primary btn-sm" data-go="orders">Buka antrean</button>')}`;
+  return `${welcome("Prioritas pekerjaan untuk shift Anda.")}<div class="metric-grid">${metric("Perlu dikerjakan", data.filter((x) => x.status_pesanan !== "Selesai").length, "Pesanan aktif", "orders")}${metric("Baru diterima", data.filter((x) => x.status_pesanan === "Diterima").length, "Segera diproses", "work")}${metric("Siap diambil", data.filter((x) => x.status_pesanan === "Siap Diambil").length, "Hubungi pelanggan", "ready")}</div>${panel("Informasi shift", "Perbarui progres melalui Daftar Pesanan.", '<p class="text-secondary mb-0">Setiap perubahan tersimpan langsung ke Supabase.</p>', '<button class="btn btn-primary btn-sm" data-go="orders">Buka antrean</button>')}`;
 }
 async function customerDashboard() {
   const { data, error } = await supabase
@@ -321,7 +348,7 @@ async function customerDashboard() {
     .order("tanggal_pesanan", { ascending: false });
   if (error) throw error;
   const a = data[0];
-  return `${welcome("Pantau cucian dan pembayaran Anda.")}<div class="metric-grid">${metric("Pesanan saya", data.length, "Semua riwayat", "▤")}${metric("Sedang diproses", data.filter((x) => !["Selesai", "Siap Diambil"].includes(x.status_pesanan)).length, "Dalam pengerjaan", "◇")}${metric("Siap diambil", data.filter((x) => x.status_pesanan === "Siap Diambil").length, "Segera diambil", "✓")}</div>${a ? panel("Pesanan terbaru", "Status diperbarui pegawai.", `<div class="d-flex justify-content-between"><div><b class="fs-5">#${a.id_pesanan}</b><p class="text-secondary">${esc(a.layanan?.nama_layanan)} · ${a.berat} kg</p></div>${badge(a.status_pesanan)}</div><div class="order-summary d-flex justify-content-between"><div><small>Estimasi</small><div>${esc(a.estimasi)}</div></div><div class="text-end"><small>Total</small><div class="order-total">${rupiah(a.total_harga)}</div></div></div>`) : panel("Belum ada pesanan", "Mulai dengan membuat pesanan.", '<button class="btn btn-primary" data-go="new-order">Pesan sekarang</button>')}`;
+  return `${welcome("Pantau cucian dan pembayaran Anda.")}<div class="metric-grid">${metric("Pesanan saya", data.length, "Semua riwayat", "orders")}${metric("Sedang diproses", data.filter((x) => !["Selesai", "Siap Diambil"].includes(x.status_pesanan)).length, "Dalam pengerjaan", "work")}${metric("Siap diambil", data.filter((x) => x.status_pesanan === "Siap Diambil").length, "Segera diambil", "ready")}</div>${a ? panel("Pesanan terbaru", "Status diperbarui pegawai.", `<div class="d-flex justify-content-between"><div><b class="fs-5">#${a.id_pesanan}</b><p class="text-secondary">${esc(a.layanan?.nama_layanan)} · ${a.berat} kg</p></div>${badge(a.status_pesanan)}</div><div class="order-summary d-flex justify-content-between"><div><small>Estimasi</small><div>${esc(a.estimasi)}</div></div><div class="text-end"><small>Total</small><div class="order-total">${rupiah(a.total_harga)}</div></div></div>`) : panel("Belum ada pesanan", "Mulai dengan membuat pesanan.", '<button class="btn btn-primary" data-go="new-order">Pesan sekarang</button>')}`;
 }
 async function servicesPage() {
   const { data, error } = await supabase
