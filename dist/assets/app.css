@@ -1323,6 +1323,167 @@ body {
   }
 }
 
+/* Floating soap bubbles */
+.soap-bubbles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  contain: strict;
+}
+.soap-bubbles span {
+  --bubble-size: 72px;
+  --bubble-left: 10%;
+  --bubble-duration: 16s;
+  --bubble-delay: 0s;
+  position: absolute;
+  left: var(--bubble-left);
+  bottom: calc(var(--bubble-size) * -1.35);
+  width: var(--bubble-size);
+  height: var(--bubble-size);
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle at 29% 24%,
+      rgba(255, 255, 255, 0.95) 0 4%,
+      transparent 5%
+    ),
+    radial-gradient(
+      circle at 66% 72%,
+      rgba(185, 217, 107, 0.24),
+      transparent 40%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.18),
+      rgba(130, 204, 236, 0.18)
+    );
+  box-shadow:
+    inset 5px 7px 14px rgba(255, 255, 255, 0.3),
+    inset -5px -7px 14px rgba(92, 183, 222, 0.12),
+    0 6px 24px rgba(78, 147, 174, 0.09);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: soap-bubble-rise var(--bubble-duration) linear var(--bubble-delay)
+    infinite;
+}
+.soap-bubbles span::before,
+.soap-bubbles span::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+.soap-bubbles span::before {
+  inset: 10% 46% 58% 16%;
+  border-top: 2px solid rgba(255, 255, 255, 0.9);
+  transform: rotate(-28deg);
+}
+.soap-bubbles span::after {
+  right: 17%;
+  bottom: 15%;
+  width: 14%;
+  height: 14%;
+  background: rgba(255, 205, 222, 0.24);
+}
+.soap-bubbles span:nth-child(1) {
+  --bubble-size: 34px;
+  --bubble-left: 4%;
+  --bubble-duration: 14s;
+  --bubble-delay: -2s;
+}
+.soap-bubbles span:nth-child(2) {
+  --bubble-size: 72px;
+  --bubble-left: 15%;
+  --bubble-duration: 19s;
+  --bubble-delay: -11s;
+}
+.soap-bubbles span:nth-child(3) {
+  --bubble-size: 45px;
+  --bubble-left: 31%;
+  --bubble-duration: 16s;
+  --bubble-delay: -6s;
+}
+.soap-bubbles span:nth-child(4) {
+  --bubble-size: 92px;
+  --bubble-left: 45%;
+  --bubble-duration: 23s;
+  --bubble-delay: -15s;
+}
+.soap-bubbles span:nth-child(5) {
+  --bubble-size: 28px;
+  --bubble-left: 58%;
+  --bubble-duration: 13s;
+  --bubble-delay: -8s;
+}
+.soap-bubbles span:nth-child(6) {
+  --bubble-size: 58px;
+  --bubble-left: 69%;
+  --bubble-duration: 18s;
+  --bubble-delay: -4s;
+}
+.soap-bubbles span:nth-child(7) {
+  --bubble-size: 108px;
+  --bubble-left: 78%;
+  --bubble-duration: 25s;
+  --bubble-delay: -19s;
+}
+.soap-bubbles span:nth-child(8) {
+  --bubble-size: 39px;
+  --bubble-left: 88%;
+  --bubble-duration: 15s;
+  --bubble-delay: -9s;
+}
+.soap-bubbles span:nth-child(9) {
+  --bubble-size: 66px;
+  --bubble-left: 95%;
+  --bubble-duration: 21s;
+  --bubble-delay: -13s;
+}
+.soap-bubbles span:nth-child(10) {
+  --bubble-size: 24px;
+  --bubble-left: 38%;
+  --bubble-duration: 12s;
+  --bubble-delay: -1s;
+}
+.welcome-bubbles {
+  opacity: 0.76;
+}
+.app-bubbles {
+  opacity: 0.42;
+}
+.app-mode .sidebar,
+.app-mode .workspace {
+  z-index: 1;
+}
+@keyframes soap-bubble-rise {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.78);
+  }
+  10% {
+    opacity: 0.72;
+  }
+  48% {
+    transform: translate3d(26px, -52vh, 0) scale(1);
+  }
+  82% {
+    opacity: 0.62;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-18px, -118vh, 0) scale(1.08);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .soap-bubbles span {
+    animation: none;
+    opacity: 0.2;
+    transform: translateY(-34vh);
+  }
+}
+
 /* Application workspace — same visual system as the welcome screen */
 body.app-mode {
   min-height: 100vh;
