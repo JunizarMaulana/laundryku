@@ -2,6 +2,8 @@
 
 Sistem Informasi Manajemen Laundry berbasis HTML, Bootstrap 5, JavaScript, dan Supabase. Aplikasi mendukung role admin, pegawai, dan pelanggan dengan pembatasan data melalui Row Level Security.
 
+**Aplikasi publik:** https://junizarmaulana.github.io/laundryku-supabase/
+
 ## Fitur
 
 - Supabase Auth dengan email dan password
