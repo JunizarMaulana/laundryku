@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Logo mesin laundry LaundryKu</title>
+  <desc id="desc">Mesin cuci modern dengan tabung berwarna biru dan aksen hijau</desc>
+  <defs>
+    <linearGradient id="body" x1="10" y1="8" x2="54" y2="56" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e9f7bd"/>
+      <stop offset="1" stop-color="#b9d96b"/>
+    </linearGradient>
+    <linearGradient id="drum" x1="20" y1="24" x2="46" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#dff5ff"/>
+      <stop offset="1" stop-color="#82ccec"/>
+    </linearGradient>
+  </defs>
+  <rect x="7" y="5" width="50" height="54" rx="15" fill="url(#body)"/>
+  <rect x="12" y="10" width="40" height="11" rx="5.5" fill="#17301f"/>
+  <circle cx="18" cy="15.5" r="2" fill="#b9d96b"/>
+  <circle cx="25" cy="15.5" r="2" fill="#78b948"/>
+  <rect x="36" y="13" width="11" height="5" rx="2.5" fill="#eef7df" opacity=".92"/>
+  <circle cx="32" cy="39" r="15" fill="#17301f"/>
+  <circle cx="32" cy="39" r="10.5" fill="url(#drum)"/>
+  <path d="M22.5 40.5c3.8-5.3 7.2 1 11.1-2.9 3.2-3.2 5.8-.2 7.8 1.7-.2 5.2-4.3 9.4-9.4 9.4-4.8 0-8.8-3.6-9.5-8.2Z" fill="#fff" opacity=".58"/>
+  <path d="m49.5 3 1.3 3.2L54 7.5l-3.2 1.3-1.3 3.2-1.3-3.2L45 7.5l3.2-1.3L49.5 3Z" fill="#fff"/>
+</svg>

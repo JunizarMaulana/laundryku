@@ -798,12 +798,16 @@ body {
   display: grid;
   place-items: center;
   border-radius: 14px 14px 14px 5px;
-  background: var(--welcome-ink);
-  color: #fff;
-  font:
-    800 1.4rem/1 "Bricolage Grotesque",
-    sans-serif;
-  box-shadow: 0 8px 0 rgba(119, 169, 66, 0.28);
+  background: #17301f;
+  box-shadow:
+    0 9px 0 rgba(119, 169, 66, 0.2),
+    0 14px 30px rgba(23, 48, 31, 0.16);
+  overflow: hidden;
+}
+.welcome-logo-mark img {
+  width: 39px;
+  height: 39px;
+  display: block;
 }
 .welcome-logo strong,
 .welcome-logo small {
@@ -1246,6 +1250,79 @@ body {
   }
 }
 
+/* Modern polish — brand depth and calmer interactive feedback */
+.welcome-shell {
+  background:
+    radial-gradient(
+      circle at 8% 14%,
+      rgba(185, 217, 107, 0.22),
+      transparent 24rem
+    ),
+    radial-gradient(
+      circle at 92% 18%,
+      rgba(130, 204, 236, 0.22),
+      transparent 28rem
+    ),
+    #f7f5ed;
+}
+.welcome-scene .login-card {
+  border-color: rgba(23, 48, 31, 0.1);
+  box-shadow:
+    0 26px 70px rgba(23, 48, 31, 0.16),
+    inset 0 1px rgba(255, 255, 255, 0.84);
+}
+.welcome-scene .form-control {
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.welcome-scene .form-control:focus {
+  border-color: #82b54d;
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(130, 181, 77, 0.14);
+}
+.welcome-scene .btn-primary,
+.app-mode .btn-primary {
+  box-shadow: 0 10px 24px rgba(23, 48, 31, 0.18);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+.welcome-scene .btn-primary:hover,
+.app-mode .btn-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(23, 48, 31, 0.24);
+}
+.app-mode .topbar {
+  box-shadow: 0 12px 34px rgba(23, 48, 31, 0.055);
+}
+.app-mode .stat-card,
+.app-mode .panel {
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease;
+}
+.app-mode .stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 46px rgba(23, 48, 31, 0.13);
+}
+.app-mode .panel:hover {
+  border-color: rgba(23, 48, 31, 0.13);
+  box-shadow: 0 24px 54px rgba(23, 48, 31, 0.09);
+}
+@media (prefers-reduced-motion: reduce) {
+  .welcome-scene .form-control,
+  .welcome-scene .btn-primary,
+  .app-mode .btn-primary,
+  .app-mode .stat-card,
+  .app-mode .panel {
+    transition: none;
+  }
+}
+
 /* Application workspace — same visual system as the welcome screen */
 body.app-mode {
   min-height: 100vh;
@@ -1305,11 +1382,14 @@ body.app-mode {
   width: 44px;
   height: 44px;
   border-radius: 14px 14px 14px 5px;
-  background: #b9d96b;
-  color: #172219;
-  font:
-    800 1.35rem/1 "Bricolage Grotesque",
-    sans-serif;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.16);
+}
+.app-mode .sidebar-brand .brand-mark img {
+  width: 40px;
+  height: 40px;
+  display: block;
 }
 .app-mode .sidebar-brand strong {
   font:

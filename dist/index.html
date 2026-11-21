@@ -18,7 +18,7 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link href="assets/app.css?v=5" rel="stylesheet" />
+    <link href="assets/app.css?v=6" rel="stylesheet" />
   </head>
   <body>
     <div id="toast" class="toast-box" role="status" aria-live="polite"></div>
@@ -26,7 +26,13 @@
     <main id="loginScreen" class="welcome-shell">
       <header class="welcome-nav">
         <a class="welcome-logo" href="#" aria-label="LaundryKu beranda">
-          <span class="welcome-logo-mark">L</span>
+          <span class="welcome-logo-mark">
+            <img
+              src="assets/laundry-machine-logo.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </span>
           <span
             ><strong>LaundryKu</strong><small>Wash · Care · Repeat</small></span
           >
@@ -142,7 +148,13 @@
     <div id="appScreen" class="app-shell d-none">
       <aside class="sidebar" id="sidebar">
         <div class="brand-lockup sidebar-brand">
-          <span class="brand-mark">L</span>
+          <span class="brand-mark">
+            <img
+              src="assets/laundry-machine-logo.svg"
+              alt=""
+              aria-hidden="true"
+            />
+          </span>
           <div>
             <strong>LaundryKu</strong><small id="roleLabel">Workspace</small>
           </div>
@@ -200,6 +212,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="assets/app.js?v=5"></script>
+    <script type="module" src="assets/app.js?v=6"></script>
   </body>
 </html>
