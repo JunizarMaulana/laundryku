@@ -204,7 +204,7 @@ $("#forgotPassword").addEventListener("click", async () => {
 $("#registerDemo").addEventListener("click", () =>
   showModal(
     "Buat akun LaundryKu",
-    `<form id="registerForm"><div class="row g-3"><div class="col-md-6"><label class="form-label">Nama lengkap</label><input class="form-control" name="nama" maxlength="40" autocomplete="name" required></div><div class="col-md-6"><label class="form-label">Username</label><input class="form-control" name="username" maxlength="25" minlength="3" pattern="[A-Za-z0-9_]+" title="Gunakan huruf, angka, atau garis bawah" autocomplete="username" required></div><div class="col-md-6"><label class="form-label">Email</label><input class="form-control" name="email" type="email" autocomplete="email" required></div><div class="col-md-6"><label class="form-label">No. handphone</label><input class="form-control" name="no_handphone" maxlength="15" pattern="[0-9+ -]+" autocomplete="tel" required></div><div class="col-12"><label class="form-label">Alamat</label><textarea class="form-control" name="alamat" rows="2" autocomplete="street-address" required></textarea></div><div class="col-md-6"><label class="form-label">Password</label><input class="form-control" name="password" type="password" minlength="6" autocomplete="new-password" required></div><div class="col-md-6"><label class="form-label">Ulangi password</label><input class="form-control" name="confirm_password" type="password" minlength="6" autocomplete="new-password" required></div><div class="col-12"><div class="alert alert-info mb-0">Akun pertama otomatis menjadi <b>admin</b>. Akun berikutnya menjadi pelanggan.</div></div><div class="col-12"><button class="btn btn-primary w-100">Buat akun</button></div></div></form>`,
+    `<form id="registerForm"><div class="row g-3"><div class="col-md-6"><label class="form-label">Nama lengkap</label><input class="form-control" name="nama" maxlength="40" autocomplete="name" required></div><div class="col-md-6"><label class="form-label">Username</label><input class="form-control" name="username" maxlength="25" minlength="3" pattern="[A-Za-z0-9_]+" title="Gunakan huruf, angka, atau garis bawah" autocomplete="username" required></div><div class="col-md-6"><label class="form-label">Email</label><input class="form-control" name="email" type="email" autocomplete="email" required></div><div class="col-md-6"><label class="form-label">No. handphone</label><input class="form-control" name="no_handphone" maxlength="15" pattern="[0-9+ -]+" autocomplete="tel" required></div><div class="col-12"><label class="form-label">Alamat</label><textarea class="form-control" name="alamat" rows="2" autocomplete="street-address" required></textarea></div><div class="col-md-6"><label class="form-label">Password</label><input class="form-control" name="password" type="password" minlength="6" autocomplete="new-password" required></div><div class="col-md-6"><label class="form-label">Ulangi password</label><input class="form-control" name="confirm_password" type="password" minlength="6" autocomplete="new-password" required></div><div class="col-12"><div class="alert alert-info mb-0">Akun baru dibuat sebagai pelanggan. Hak akses pegawai diberikan secara internal oleh pengelola.</div></div><div class="col-12"><button class="btn btn-primary w-100">Buat akun</button></div></div></form>`,
     async (form) => {
       const values = Object.fromEntries(new FormData(form));
       if (values.password !== values.confirm_password)
@@ -412,7 +412,7 @@ async function complaintsPage() {
     data
       .map(
         (c) =>
-          `<article class="border-bottom py-3"><div class="d-flex justify-content-between gap-3"><div><b>${esc(c.profiles?.nama || profile.nama)}</b> <span class="text-secondary">· #${c.id_pesanan}</span><p class="my-2">${esc(c.isi_keluhan)}</p>${c.jawaban_keluhan ? `<div class="p-3 rounded bg-light"><small class="text-secondary">Jawaban admin</small><div>${esc(c.jawaban_keluhan)}</div></div>` : profile.role === "admin" ? `<button class="btn btn-sm btn-primary" data-answer="${c.id_keluhan}">Tulis jawaban</button>` : badge("Menunggu")}</div>${badge(c.jawaban_keluhan ? "Dijawab" : "Menunggu")}</div></article>`,
+          `<article class="border-bottom py-3"><div class="d-flex justify-content-between gap-3"><div><b>${esc(c.profiles?.nama || profile.nama)}</b> <span class="text-secondary">· #${c.id_pesanan}</span><p class="my-2">${esc(c.isi_keluhan)}</p>${c.jawaban_keluhan ? `<div class="p-3 rounded bg-light"><small class="text-secondary">Jawaban pengelola</small><div>${esc(c.jawaban_keluhan)}</div></div>` : profile.role === "admin" ? `<button class="btn btn-sm btn-primary" data-answer="${c.id_keluhan}">Tulis jawaban</button>` : badge("Menunggu")}</div>${badge(c.jawaban_keluhan ? "Dijawab" : "Menunggu")}</div></article>`,
       )
       .join("") || '<div class="empty">Belum ada keluhan.</div>',
     profile.role === "pelanggan"
@@ -543,12 +543,10 @@ function bindPageEvents() {
   $("[data-add-service]")?.addEventListener("click", () =>
     showModal("Tambah layanan", serviceForm(), async (f) => {
       const v = Object.fromEntries(new FormData(f));
-      const { error } = await supabase
-        .from("layanan")
-        .insert({
-          nama_layanan: v.nama_layanan,
-          harga_per_kg: Number(v.harga_per_kg),
-        });
+      const { error } = await supabase.from("layanan").insert({
+        nama_layanan: v.nama_layanan,
+        harga_per_kg: Number(v.harga_per_kg),
+      });
       if (error) throw error;
       toast("Layanan ditambahkan", "success");
       await navigate("services");
@@ -592,16 +590,14 @@ function bindPageEvents() {
     e.preventDefault();
     const o = $("#serviceSelect").selectedOptions[0],
       w = Number($("#weightInput").value);
-    const { error } = await supabase
-      .from("pesanan")
-      .insert({
-        id_user: currentUser.id,
-        id_layanan: Number(o.value),
-        berat: w,
-        total_harga: Number(o.dataset.price) * w,
-        status_pesanan: "Diterima",
-        estimasi: $("#estimateInput").value,
-      });
+    const { error } = await supabase.from("pesanan").insert({
+      id_user: currentUser.id,
+      id_layanan: Number(o.value),
+      berat: w,
+      total_harga: Number(o.dataset.price) * w,
+      status_pesanan: "Diterima",
+      estimasi: $("#estimateInput").value,
+    });
     if (error) return handleError(error);
     toast("Pesanan dibuat", "success");
     await navigate("my-orders");
@@ -692,14 +688,12 @@ async function openPaymentForm() {
         .from("bukti-pembayaran")
         .upload(path, file, { contentType: file.type });
       if (up.error) throw up.error;
-      const { error: e } = await supabase
-        .from("pembayaran")
-        .insert({
-          id_pesanan: Number(v.get("id_pesanan")),
-          total_bayar: Number(v.get("jumlah")),
-          metode_pembayaran: v.get("metode"),
-          bukti_pembayaran: path,
-        });
+      const { error: e } = await supabase.from("pembayaran").insert({
+        id_pesanan: Number(v.get("id_pesanan")),
+        total_bayar: Number(v.get("jumlah")),
+        metode_pembayaran: v.get("metode"),
+        bukti_pembayaran: path,
+      });
       if (e) throw e;
       toast("Pembayaran dikirim", "success");
       await navigate("payments");
@@ -717,13 +711,11 @@ async function openComplaintForm() {
     `<form><div class="mb-3"><label class="form-label">Pesanan</label><select class="form-select" name="id_pesanan">${data.map((o) => `<option value="${o.id_pesanan}">#${o.id_pesanan}</option>`).join("")}</select></div><div class="mb-3"><label class="form-label">Isi keluhan</label><textarea class="form-control" name="isi" rows="4" required></textarea></div><button class="btn btn-primary w-100">Kirim</button></form>`,
     async (f) => {
       const v = Object.fromEntries(new FormData(f));
-      const { error: e } = await supabase
-        .from("keluhan")
-        .insert({
-          id_user: currentUser.id,
-          id_pesanan: Number(v.id_pesanan),
-          isi_keluhan: v.isi,
-        });
+      const { error: e } = await supabase.from("keluhan").insert({
+        id_user: currentUser.id,
+        id_pesanan: Number(v.id_pesanan),
+        isi_keluhan: v.isi,
+      });
       if (e) throw e;
       toast("Keluhan dikirim", "success");
       await navigate("complaints");

@@ -74,18 +74,15 @@ security definer
 set search_path = public
 as $$
 declare
-  initial_role text;
   base_username text;
 begin
-  select case when exists(select 1 from public.profiles where role = 'admin')
-    then 'pelanggan' else 'admin' end into initial_role;
   base_username := coalesce(nullif(new.raw_user_meta_data->>'username', ''), split_part(new.email, '@', 1));
   insert into public.profiles (id, nama, username, role, alamat, no_handphone)
   values (
     new.id,
     coalesce(nullif(new.raw_user_meta_data->>'nama', ''), split_part(new.email, '@', 1)),
     left(base_username, 17) || case when exists(select 1 from public.profiles where username = left(base_username, 25)) then '-' || left(new.id::text, 7) else '' end,
-    initial_role,
+    'pelanggan',
     nullif(new.raw_user_meta_data->>'alamat', ''),
     nullif(new.raw_user_meta_data->>'no_handphone', '')
   );

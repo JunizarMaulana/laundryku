@@ -1,6 +1,6 @@
 # LaundryKu Supabase
 
-Sistem Informasi Manajemen Laundry berbasis HTML, Bootstrap 5, JavaScript, dan Supabase. Aplikasi mendukung role admin, pegawai, dan pelanggan dengan pembatasan data melalui Row Level Security.
+Sistem Informasi Manajemen Laundry berbasis HTML, Bootstrap 5, JavaScript, dan Supabase. Aplikasi menggunakan hak akses berbasis peran dengan pembatasan data melalui Row Level Security.
 
 **Aplikasi publik:** https://junizarmaulana.github.io/laundryku-supabase/
 
@@ -12,10 +12,10 @@ Sistem Informasi Manajemen Laundry berbasis HTML, Bootstrap 5, JavaScript, dan S
 - Pesanan laundry dan kalkulasi biaya
 - Perubahan status oleh pegawai
 - Pembayaran dan unggah bukti ke Supabase Storage
-- Verifikasi pembayaran oleh admin
-- Keluhan dan jawaban admin
+- Verifikasi pembayaran oleh staf berwenang
+- Keluhan dan jawaban staf
 - Laporan cetak
-- Pengaturan role pengguna oleh admin
+- Pengaturan hak akses pengguna secara internal
 
 ## Menyiapkan Supabase
 
@@ -24,7 +24,7 @@ Sistem Informasi Manajemen Laundry berbasis HTML, Bootstrap 5, JavaScript, dan S
 3. Salin Project URL dan **publishable key** ke `dist/assets/config.js`.
 4. Jangan pernah memasukkan secret key atau database password ke repository.
 
-Akun pertama yang mendaftar otomatis menjadi admin. Akun berikutnya menjadi pelanggan. Admin dapat mengubah akun pelanggan menjadi pegawai melalui menu Pengguna.
+Semua pendaftaran publik otomatis menjadi pelanggan. Akun pegawai ditetapkan secara internal melalui menu Pengguna oleh pengelola yang berwenang.
 
 Jika konfirmasi email Supabase aktif, pengguna harus membuka email konfirmasi sebelum login pertama.
 
@@ -47,4 +47,4 @@ Workflow `.github/workflows/pages.yml` menerbitkan isi folder `dist` ke GitHub P
 - Semua tabel memiliki RLS.
 - Pelanggan hanya dapat membaca pesanan, pembayaran, dan keluhan miliknya.
 - Bukti pembayaran disimpan di bucket privat dan diakses menggunakan signed URL.
-- Perubahan role dilindungi trigger dan hanya dapat dilakukan admin.
+- Perubahan role dilindungi trigger dan hanya dapat dilakukan pengelola berwenang.
