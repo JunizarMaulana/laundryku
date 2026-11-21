@@ -1858,7 +1858,7 @@ body.app-mode {
 .app-mode .logout-btn {
   position: relative;
   z-index: 1;
-  margin: auto 2px 0;
+  margin: 0 2px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 13px;
   padding: 12px 13px;
@@ -1866,6 +1866,22 @@ body.app-mode {
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.82rem;
   font-weight: 800;
+}
+.app-mode .sidebar-credit {
+  position: relative;
+  z-index: 1;
+  margin: auto 9px 10px;
+  color: rgba(255, 255, 255, 0.56);
+  font-size: 0.67rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+.app-mode .sidebar-credit span {
+  display: block;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.34);
+  font-size: 0.61rem;
+  font-weight: 700;
 }
 .app-mode .logout-btn:hover {
   background: rgba(255, 255, 255, 0.1);
