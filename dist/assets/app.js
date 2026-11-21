@@ -169,7 +169,7 @@ $("#loginForm").addEventListener("submit", async (event) => {
     password: $("#password").value,
   });
   button.disabled = false;
-  button.textContent = "Masuk";
+  button.textContent = "Masuk sekarang";
   if (error) {
     authNotice(authMessage(error), "error");
     return toast(authMessage(error), "danger");
