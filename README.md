@@ -2,7 +2,7 @@
 
 Sistem Informasi Manajemen Laundry berbasis web untuk mengelola layanan, pesanan, pembayaran, keluhan, pengguna, dan laporan dalam satu aplikasi. Website dibuat dengan HTML, CSS, Bootstrap 5, JavaScript, dan Supabase.
 
-**Website publik:** https://junizarmaulana.github.io/laundry-ku/
+**Website publik:** https://junizarmaulana.github.io/laundryku-supabase/
 
 > Dibuat oleh **Kelompok 3 — Mata Kuliah Analisis Perancangan**.
 
