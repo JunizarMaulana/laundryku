@@ -1,7 +1,14 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./config.js";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  auth: {
+    flowType: "pkce",
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+  },
+});
 const $ = (selector) => document.querySelector(selector);
 const rupiah = (value) =>
   new Intl.NumberFormat("id-ID", {
@@ -200,6 +207,22 @@ $("#loginForm").addEventListener("submit", async (event) => {
     return toast(authMessage(error), "danger");
   }
   toast("Login berhasil", "success");
+});
+$("#googleLogin").addEventListener("click", async (event) => {
+  const button = event.currentTarget;
+  button.disabled = true;
+  authNotice("Menghubungkan ke Google…");
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}${window.location.pathname}`,
+    },
+  });
+  if (error) {
+    button.disabled = false;
+    authNotice(authMessage(error), "error");
+    toast(authMessage(error), "danger");
+  }
 });
 $("#forgotPassword").addEventListener("click", async () => {
   const email = $("#email").value.trim().toLowerCase();

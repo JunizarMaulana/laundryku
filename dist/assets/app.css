@@ -1092,6 +1092,60 @@ body {
   background: #2e472e;
   transform: translateY(-1px);
 }
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 12px 0;
+  color: #8a9287;
+  font-size: 0.67rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.login-divider::before,
+.login-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: rgba(23, 34, 25, 0.12);
+}
+.google-login-btn {
+  width: 100%;
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  border: 1px solid rgba(23, 34, 25, 0.14);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #273326;
+  font-size: 0.8rem;
+  font-weight: 800;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+.google-login-btn svg {
+  width: 19px;
+  height: 19px;
+  flex: 0 0 auto;
+}
+.google-login-btn:hover,
+.google-login-btn:focus-visible {
+  border-color: rgba(66, 133, 244, 0.48);
+  background: #fff;
+  box-shadow: 0 8px 22px rgba(66, 133, 244, 0.12);
+  transform: translateY(-1px);
+}
+.google-login-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+}
 .register-row {
   display: flex;
   justify-content: center;

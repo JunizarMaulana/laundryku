@@ -75,13 +75,28 @@ set search_path = public
 as $$
 declare
   base_username text;
+  requested_username text;
 begin
-  base_username := coalesce(nullif(new.raw_user_meta_data->>'username', ''), split_part(new.email, '@', 1));
+  requested_username := nullif(new.raw_user_meta_data->>'username', '');
+  base_username := coalesce(
+    requested_username,
+    split_part(new.email, '@', 1),
+    'pelanggan'
+  );
   insert into public.profiles (id, nama, username, role, alamat, no_handphone)
   values (
     new.id,
-    coalesce(nullif(new.raw_user_meta_data->>'nama', ''), split_part(new.email, '@', 1)),
-    left(base_username, 17) || case when exists(select 1 from public.profiles where username = left(base_username, 25)) then '-' || left(new.id::text, 7) else '' end,
+    left(coalesce(
+      nullif(new.raw_user_meta_data->>'nama', ''),
+      nullif(new.raw_user_meta_data->>'full_name', ''),
+      nullif(new.raw_user_meta_data->>'name', ''),
+      split_part(new.email, '@', 1),
+      'Pelanggan LaundryKu'
+    ), 40),
+    case
+      when requested_username is not null then left(requested_username, 25)
+      else left(base_username, 17) || '-' || left(new.id::text, 7)
+    end,
     'pelanggan',
     nullif(new.raw_user_meta_data->>'alamat', ''),
     nullif(new.raw_user_meta_data->>'no_handphone', '')

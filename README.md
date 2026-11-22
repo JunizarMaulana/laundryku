@@ -2,13 +2,14 @@
 
 Sistem Informasi Manajemen Laundry berbasis web untuk mengelola layanan, pesanan, pembayaran, keluhan, pengguna, dan laporan dalam satu aplikasi. Website dibuat dengan HTML, CSS, Bootstrap 5, JavaScript, dan Supabase.
 
-**Website publik:** https://junizarmaulana.github.io/laundryku-supabase/
+**Website publik:** https://junizarmaulana.github.io/laundryku/
 
 > Dibuat oleh **Kelompok 3 — Mata Kuliah Analisis Perancangan**.
 
 ## Fitur utama
 
-- Login, pendaftaran pelanggan, dan pemulihan password melalui Supabase Auth.
+- Login aman dengan Google atau email/password melalui Supabase Auth.
+- Pendaftaran pelanggan dan pemulihan password melalui email.
 - Dashboard berbeda untuk admin, pegawai, dan pelanggan.
 - Pengelolaan layanan serta harga laundry.
 - Pembuatan pesanan dan perhitungan biaya berdasarkan berat.
@@ -25,8 +26,8 @@ Sistem Informasi Manajemen Laundry berbasis web untuk mengelola layanan, pesanan
 ### Pelanggan
 
 1. Buka website publik LaundryKu.
-2. Pilih **Buat akun baru** jika belum mempunyai akun.
-3. Masuk menggunakan email dan password yang telah didaftarkan.
+2. Pilih **Lanjutkan dengan Google** untuk masuk dengan akun Google, atau pilih **Buat akun baru** untuk mendaftar memakai email.
+3. Login Google maupun pendaftaran publik otomatis mendapatkan role `pelanggan`.
 4. Pilih **Pesan Laundry** untuk membuat pesanan.
 5. Tentukan layanan, berat cucian, dan estimasi pengerjaan.
 6. Pantau status melalui menu **Pesanan Saya**.
@@ -59,8 +60,8 @@ Siapkan Git, browser modern, PHP atau server lokal lain, akun Supabase, dan akun
 ### 2. Unduh source code
 
 ```powershell
-git clone https://github.com/JunizarMaulana/laundry-ku.git
-cd laundry-ku
+git clone https://github.com/JunizarMaulana/laundryku.git
+cd laundryku
 ```
 
 ### 3. Membuat database Supabase
@@ -83,7 +84,18 @@ export const SUPABASE_PUBLISHABLE_KEY = "PUBLISHABLE_KEY_ANDA";
 
 Jangan memasukkan service-role key atau database password ke repository.
 
-### 5. Menjalankan secara lokal
+### 5. Mengaktifkan login Google
+
+1. Di Google Cloud Console, buat OAuth Client ID bertipe **Web application**.
+2. Tambahkan JavaScript origin `https://junizarmaulana.github.io`.
+3. Tambahkan redirect URI Supabase `https://gcosdrzfbfifydizzlkc.supabase.co/auth/v1/callback`.
+4. Di Supabase buka **Authentication → Providers → Google**, lalu masukkan Client ID dan Client Secret dari Google.
+5. Di **Authentication → URL Configuration**, gunakan Site URL `https://junizarmaulana.github.io/laundryku/` dan tambahkan redirect URL `https://junizarmaulana.github.io/laundryku/**`.
+6. Untuk pengembangan lokal, tambahkan `http://127.0.0.1:8090/**` sebagai redirect URL tambahan.
+
+Client Secret Google hanya disimpan di pengaturan Supabase, tidak di source code atau GitHub.
+
+### 6. Menjalankan secara lokal
 
 ```powershell
 php -S 127.0.0.1:8090 -t dist
@@ -91,7 +103,7 @@ php -S 127.0.0.1:8090 -t dist
 
 Buka `http://127.0.0.1:8090` pada browser.
 
-### 6. Mengubah website
+### 7. Mengubah website
 
 - Struktur halaman: `dist/index.html`
 - Desain dan animasi: `dist/assets/app.css`
@@ -100,7 +112,7 @@ Buka `http://127.0.0.1:8090` pada browser.
 - Logo: `dist/assets/laundry-machine-logo.svg`
 - Ilustrasi utama: `dist/assets/laundry-hero-v1.png`
 
-### 7. Publikasi ke GitHub Pages
+### 8. Publikasi ke GitHub Pages
 
 1. Push source code ke branch `main`.
 2. Buka **Settings → Pages** pada repository GitHub.
@@ -111,7 +123,7 @@ Buka `http://127.0.0.1:8090` pada browser.
 ## Struktur folder
 
 ```text
-laundry-ku/
+laundryku/
 ├── .github/workflows/pages.yml
 ├── dist/
 │   ├── index.html
@@ -127,6 +139,7 @@ laundry-ku/
 
 - Semua tabel menggunakan Row Level Security.
 - Pendaftaran publik otomatis mendapatkan role pelanggan.
+- Login Google menggunakan OAuth 2.0 dan alur PKCE melalui Supabase Auth.
 - Pelanggan hanya dapat mengakses data miliknya.
 - Bukti pembayaran tersimpan pada bucket privat.
 - Perubahan role dilindungi oleh aturan database.
