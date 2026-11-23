@@ -287,9 +287,31 @@ $("#logoutBtn").addEventListener("click", async () => {
   $("#password").value = "";
   toast("Anda berhasil keluar");
 });
-$("#menuToggle").addEventListener("click", () =>
-  $("#sidebar").classList.toggle("open"),
-);
+function setMobileMenu(open) {
+  const sidebar = $("#sidebar");
+  const backdrop = $("#sidebarBackdrop");
+  const toggle = $("#menuToggle");
+  sidebar.classList.toggle("open", open);
+  backdrop.classList.toggle("show", open);
+  backdrop.tabIndex = open ? 0 : -1;
+  toggle.classList.toggle("active", open);
+  toggle.setAttribute("aria-expanded", String(open));
+  toggle.setAttribute("aria-label", open ? "Tutup menu" : "Buka menu");
+  document.body.classList.toggle("menu-open", open);
+}
+
+$("#menuToggle").addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  setMobileMenu(!$("#sidebar").classList.contains("open"));
+});
+$("#sidebarBackdrop").addEventListener("click", () => setMobileMenu(false));
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") setMobileMenu(false);
+});
+window.addEventListener("resize", () => {
+  if (window.innerWidth > 900) setMobileMenu(false);
+});
 
 function buildMenu() {
   $("#navMenu").innerHTML = menus[profile.role]
@@ -306,7 +328,7 @@ function buildMenu() {
 }
 async function navigate(page) {
   currentPage = page;
-  $("#sidebar").classList.remove("open");
+  setMobileMenu(false);
   document
     .querySelectorAll(".nav-item")
     .forEach((i) => i.classList.toggle("active", i.dataset.page === page));

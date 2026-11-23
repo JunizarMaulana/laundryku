@@ -18,7 +18,7 @@
       href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Nunito+Sans:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
-    <link href="assets/app.css?v=11" rel="stylesheet" />
+    <link href="assets/app.css?v=12" rel="stylesheet" />
   </head>
   <body>
     <div id="toast" class="toast-box" role="status" aria-live="polite"></div>
@@ -221,6 +221,13 @@
         </p>
         <button class="logout-btn" type="button" id="logoutBtn">Keluar</button>
       </aside>
+      <button
+        class="sidebar-backdrop"
+        id="sidebarBackdrop"
+        type="button"
+        aria-label="Tutup menu"
+        tabindex="-1"
+      ></button>
 
       <section class="workspace">
         <header class="topbar">
@@ -229,8 +236,12 @@
             id="menuToggle"
             type="button"
             aria-label="Buka menu"
+            aria-controls="sidebar"
+            aria-expanded="false"
           >
-            ☰
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
           </button>
           <div>
             <p id="breadcrumb">LaundryKu / Dashboard</p>
@@ -264,6 +275,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="assets/app.js?v=11"></script>
+    <script type="module" src="assets/app.js?v=12"></script>
   </body>
 </html>

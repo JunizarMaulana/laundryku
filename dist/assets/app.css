@@ -2381,3 +2381,344 @@ body.app-mode {
 .app-mode .nav-item.active .nav-icon {
   color: var(--feature-color);
 }
+
+/* Mobile parity: preserve the visual identity while adapting every surface. */
+.sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  body.menu-open {
+    overflow: hidden;
+  }
+
+  .welcome-shell {
+    min-height: 100svh;
+  }
+
+  .welcome-nav,
+  .welcome-hero,
+  .welcome-footer {
+    width: min(100%, 680px);
+    margin-inline: auto;
+  }
+
+  .welcome-hero {
+    gap: 24px;
+    padding-top: 28px;
+  }
+
+  .welcome-copy h1 {
+    max-width: 9ch;
+    font-size: clamp(3.4rem, 14vw, 5.8rem);
+  }
+
+  .welcome-scene .login-panel {
+    z-index: 4;
+  }
+
+  .sidebar-backdrop {
+    position: fixed;
+    z-index: 89;
+    inset: 0;
+    display: block;
+    visibility: hidden;
+    border: 0;
+    padding: 0;
+    background: rgba(12, 24, 15, 0.48);
+    opacity: 0;
+    backdrop-filter: blur(3px);
+    transition: opacity 0.22s ease, visibility 0.22s ease;
+  }
+
+  .sidebar-backdrop.show {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .app-mode .sidebar {
+    z-index: 90;
+    height: 100dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .app-mode .topbar {
+    position: sticky;
+    z-index: 40;
+    top: 0;
+  }
+
+  .app-mode .menu-toggle {
+    position: relative;
+    z-index: 100;
+    display: grid;
+    flex: 0 0 44px;
+    width: 48px;
+    height: 48px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(23, 34, 25, 0.12);
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .app-mode .menu-toggle span {
+    position: absolute;
+    left: 14px;
+    width: 18px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    transition: transform 0.2s ease, opacity 0.2s ease, top 0.2s ease;
+  }
+
+  .app-mode .menu-toggle span:nth-child(1) {
+    top: 15px;
+  }
+
+  .app-mode .menu-toggle span:nth-child(2) {
+    top: 22px;
+  }
+
+  .app-mode .menu-toggle span:nth-child(3) {
+    top: 29px;
+  }
+
+  .app-mode .menu-toggle.active span:nth-child(1) {
+    top: 22px;
+    transform: rotate(45deg);
+  }
+
+  .app-mode .menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .app-mode .menu-toggle.active span:nth-child(3) {
+    top: 22px;
+    transform: rotate(-45deg);
+  }
+
+  .app-mode .topbar > div:first-of-type {
+    min-width: 0;
+  }
+
+  .app-mode .topbar p,
+  .app-mode .topbar h1 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .app-mode .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+
+  .app-mode .table {
+    min-width: 660px;
+  }
+
+  .modal-dialog {
+    margin: 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  .welcome-shell {
+    padding: 14px 12px 24px;
+  }
+
+  .welcome-nav {
+    min-height: 58px;
+  }
+
+  .welcome-logo-mark {
+    width: 44px;
+    height: 44px;
+  }
+
+  .welcome-logo strong {
+    font-size: 1rem;
+  }
+
+  .welcome-hero {
+    gap: 18px;
+    padding-top: 20px;
+  }
+
+  .welcome-kicker {
+    font-size: 0.65rem;
+  }
+
+  .welcome-copy h1 {
+    max-width: none;
+    margin-top: 14px;
+    font-size: clamp(3.05rem, 16vw, 4.45rem);
+    line-height: 0.84;
+  }
+
+  .welcome-copy > p {
+    margin-top: 18px;
+    font-size: 0.96rem;
+    line-height: 1.65;
+  }
+
+  .welcome-benefits {
+    gap: 6px;
+    margin-top: 18px;
+  }
+
+  .welcome-benefits span {
+    min-width: 0;
+    padding: 9px 5px;
+    border-radius: 12px;
+    font-size: 0.62rem;
+  }
+
+  .welcome-art {
+    height: 230px;
+    border-width: 5px;
+    border-radius: 24px;
+  }
+
+  .welcome-scene .login-panel {
+    width: calc(100% - 8px);
+    margin-top: -22px;
+  }
+
+  .welcome-scene .login-card {
+    padding: 20px 16px;
+  }
+
+  .login-heading h2 {
+    font-size: 1.75rem;
+  }
+
+  .welcome-scene .form-control,
+  .welcome-scene .btn,
+  .google-login-btn {
+    min-height: 48px;
+    font-size: 0.9rem;
+  }
+
+  .login-options {
+    gap: 12px;
+  }
+
+  .welcome-footer {
+    align-items: center;
+    flex-direction: column;
+    gap: 7px;
+    margin-top: 28px;
+    text-align: center;
+    line-height: 1.45;
+  }
+
+  .app-mode .topbar {
+    height: 76px;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .app-mode .topbar > div:first-of-type {
+    margin-left: 0;
+  }
+
+  .app-mode .topbar p {
+    margin-bottom: 3px;
+    font-size: 0.65rem;
+  }
+
+  .app-mode .topbar h1 {
+    font-size: 1.28rem;
+  }
+
+  .app-mode .page-content {
+    padding: 18px 12px 48px;
+  }
+
+  .app-mode .welcome {
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .app-mode .welcome h2 {
+    font-size: 1.65rem;
+  }
+
+  .app-mode .welcome p {
+    font-size: 0.84rem;
+  }
+
+  .app-mode .metric-grid {
+    gap: 10px;
+  }
+
+  .app-mode .metric-card {
+    min-height: 122px;
+    padding: 18px;
+  }
+
+  .app-mode .metric-label {
+    margin-bottom: 10px;
+  }
+
+  .app-mode .metric-value {
+    font-size: 2rem;
+  }
+
+  .app-mode .metric-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .app-mode .panel {
+    padding: 15px;
+  }
+
+  .app-mode .panel-head {
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+
+  .app-mode .panel-head .btn,
+  .app-mode .toolbar .btn,
+  .app-mode .toolbar .form-control,
+  .app-mode .toolbar .form-select {
+    width: 100%;
+  }
+
+  .app-mode .content-grid,
+  .app-mode .demo-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .app-mode .table {
+    min-width: 620px;
+    font-size: 0.78rem;
+  }
+
+  .app-mode .table > :not(caption) > * > * {
+    padding: 0.75rem 0.65rem;
+  }
+
+  .modal .modal-content {
+    max-height: calc(100dvh - 24px);
+    border-radius: 20px;
+  }
+
+  .modal .modal-body {
+    overflow-y: auto;
+    padding: 18px;
+  }
+}
