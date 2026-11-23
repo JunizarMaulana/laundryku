@@ -2382,6 +2382,62 @@ body.app-mode {
   color: var(--feature-color);
 }
 
+.login-security {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+  border: 1px solid rgba(91, 132, 58, 0.17);
+  border-radius: 14px;
+  padding: 10px 12px;
+  background: rgba(231, 241, 211, 0.58);
+  color: #466337;
+}
+
+.login-security > span {
+  display: grid;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 9px;
+  background: #dff0ae;
+  font-weight: 900;
+}
+
+.login-security p,
+.turnstile-area p {
+  margin: 0;
+}
+
+.login-security strong,
+.login-security small {
+  display: block;
+}
+
+.login-security strong {
+  font-size: 0.78rem;
+}
+
+.login-security small {
+  margin-top: 2px;
+  color: #687a60;
+  font-size: 0.68rem;
+}
+
+.turnstile-area {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  margin: 14px 0;
+}
+
+.turnstile-area p {
+  color: #73806e;
+  font-size: 0.69rem;
+  font-weight: 700;
+}
+
 /* Mobile parity: preserve the visual identity while adapting every surface. */
 .sidebar-backdrop {
   display: none;

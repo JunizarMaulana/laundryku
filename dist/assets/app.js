@@ -1,5 +1,9 @@
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-import { SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY } from "./config.js";
+import {
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY,
+  TURNSTILE_SITE_KEY,
+} from "./config.js";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
@@ -92,7 +96,115 @@ const menus = {
 let currentUser = null,
   profile = null,
   currentPage = "dashboard",
-  toastTimer;
+  toastTimer,
+  loginCaptchaToken = "",
+  loginTurnstileId = null,
+  lockTimer = null;
+
+const LOGIN_LIMIT = 5;
+const LOGIN_LOCK_MS = 15 * 60 * 1000;
+const LOGIN_ATTEMPT_KEY = "laundryku.login-guard.v1";
+
+function readLoginGuard() {
+  try {
+    return JSON.parse(localStorage.getItem(LOGIN_ATTEMPT_KEY)) || {
+      attempts: 0,
+      lockedUntil: 0,
+    };
+  } catch {
+    return { attempts: 0, lockedUntil: 0 };
+  }
+}
+
+function writeLoginGuard(state) {
+  localStorage.setItem(LOGIN_ATTEMPT_KEY, JSON.stringify(state));
+}
+
+function remainingLockSeconds() {
+  const state = readLoginGuard();
+  return Math.max(0, Math.ceil((Number(state.lockedUntil || 0) - Date.now()) / 1000));
+}
+
+function formatLockTime(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return `${minutes}:${String(rest).padStart(2, "0")}`;
+}
+
+function updateLoginLock() {
+  const button = $("#loginButton");
+  const seconds = remainingLockSeconds();
+  if (!seconds) {
+    clearInterval(lockTimer);
+    lockTimer = null;
+    button.disabled = false;
+    button.textContent = "Masuk sekarang";
+    const state = readLoginGuard();
+    if (state.lockedUntil) writeLoginGuard({ attempts: 0, lockedUntil: 0 });
+    return false;
+  }
+  button.disabled = true;
+  button.textContent = `Coba lagi ${formatLockTime(seconds)}`;
+  authNotice(
+    `Login dikunci sementara karena terlalu banyak percobaan. Coba lagi dalam ${formatLockTime(seconds)}.`,
+    "error",
+  );
+  if (!lockTimer) lockTimer = setInterval(updateLoginLock, 1000);
+  return true;
+}
+
+function recordFailedLogin() {
+  const state = readLoginGuard();
+  const attempts = Number(state.attempts || 0) + 1;
+  if (attempts >= LOGIN_LIMIT) {
+    writeLoginGuard({ attempts, lockedUntil: Date.now() + LOGIN_LOCK_MS });
+    updateLoginLock();
+    return 0;
+  }
+  writeLoginGuard({ attempts, lockedUntil: 0 });
+  return LOGIN_LIMIT - attempts;
+}
+
+function clearLoginGuard() {
+  writeLoginGuard({ attempts: 0, lockedUntil: 0 });
+  clearInterval(lockTimer);
+  lockTimer = null;
+}
+
+function resetLoginTurnstile() {
+  loginCaptchaToken = "";
+  if (loginTurnstileId !== null && window.turnstile)
+    window.turnstile.reset(loginTurnstileId);
+}
+
+function renderLoginTurnstile() {
+  if (!TURNSTILE_SITE_KEY || !window.turnstile || loginTurnstileId !== null)
+    return;
+  $("#turnstileArea").classList.remove("d-none");
+  loginTurnstileId = window.turnstile.render("#turnstileWidget", {
+    sitekey: TURNSTILE_SITE_KEY,
+    theme: "light",
+    size: "flexible",
+    callback: (token) => {
+      loginCaptchaToken = token;
+      authNotice();
+    },
+    "expired-callback": () => {
+      loginCaptchaToken = "";
+    },
+    "error-callback": () => {
+      loginCaptchaToken = "";
+      authNotice("Verifikasi keamanan gagal dimuat. Muat ulang halaman.", "error");
+    },
+  });
+}
+
+function requireCaptcha() {
+  if (!TURNSTILE_SITE_KEY) return true;
+  if (loginCaptchaToken) return true;
+  authNotice("Selesaikan verifikasi keamanan terlebih dahulu.", "error");
+  return false;
+}
 
 const authMessage = (error) => {
   const message = String(error?.message || "").toLowerCase();
@@ -106,6 +218,8 @@ const authMessage = (error) => {
     return "Password minimal 6 karakter.";
   if (message.includes("rate limit"))
     return "Terlalu banyak percobaan. Tunggu sebentar lalu coba lagi.";
+  if (message.includes("captcha"))
+    return "Verifikasi keamanan gagal atau kedaluwarsa. Silakan ulangi.";
   if (message.includes("network") || message.includes("fetch"))
     return "Tidak dapat terhubung. Periksa koneksi internet Anda.";
   return error?.message || "Terjadi kesalahan autentikasi.";
@@ -136,6 +250,15 @@ function showLoading() {
 }
 
 async function init() {
+  updateLoginLock();
+  if (TURNSTILE_SITE_KEY) {
+    const waitForTurnstile = setInterval(() => {
+      if (!window.turnstile) return;
+      clearInterval(waitForTurnstile);
+      renderLoginTurnstile();
+    }, 200);
+    setTimeout(() => clearInterval(waitForTurnstile), 10000);
+  }
   const {
     data: { session },
   } = await supabase.auth.getSession();
@@ -193,19 +316,34 @@ $("#togglePassword").addEventListener("click", (event) => {
 $("#loginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
   const button = event.submitter;
+  if (updateLoginLock() || !requireCaptcha()) return;
   button.disabled = true;
   button.textContent = "Memproses…";
   authNotice();
   const { error } = await supabase.auth.signInWithPassword({
     email: $("#email").value.trim().toLowerCase(),
     password: $("#password").value,
+    options: loginCaptchaToken ? { captchaToken: loginCaptchaToken } : undefined,
   });
   button.disabled = false;
   button.textContent = "Masuk sekarang";
   if (error) {
-    authNotice(authMessage(error), "error");
-    return toast(authMessage(error), "danger");
+    const credentialError =
+      error?.code === "invalid_credentials" ||
+      String(error?.message || "")
+        .toLowerCase()
+        .includes("invalid login credentials");
+    const remaining = credentialError ? recordFailedLogin() : null;
+    resetLoginTurnstile();
+    const message = credentialError
+      ? remaining
+        ? `${authMessage(error)} Tersisa ${remaining} percobaan.`
+        : "Terlalu banyak percobaan. Login dikunci selama 15 menit."
+      : authMessage(error);
+    authNotice(message, "error");
+    return toast(message, "danger");
   }
+  clearLoginGuard();
   toast("Login berhasil", "success");
 });
 $("#googleLogin").addEventListener("click", async (event) => {
@@ -225,6 +363,7 @@ $("#googleLogin").addEventListener("click", async (event) => {
   }
 });
 $("#forgotPassword").addEventListener("click", async () => {
+  if (updateLoginLock() || !requireCaptcha()) return;
   const email = $("#email").value.trim().toLowerCase();
   if (!email) {
     authNotice("Masukkan email Anda terlebih dahulu.", "error");
@@ -236,23 +375,27 @@ $("#forgotPassword").addEventListener("click", async () => {
   button.textContent = "Mengirim…";
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${location.origin}${location.pathname}`,
+    captchaToken: loginCaptchaToken || undefined,
   });
   button.disabled = false;
   button.textContent = "Lupa password?";
   if (error) {
+    resetLoginTurnstile();
     authNotice(authMessage(error), "error");
     return;
   }
+  resetLoginTurnstile();
   authNotice(
     "Tautan reset password sudah dikirim. Periksa email dan folder spam.",
     "success",
   );
   toast("Email reset password dikirim", "success");
 });
-$("#registerDemo").addEventListener("click", () =>
+$("#registerDemo").addEventListener("click", () => {
+  if (updateLoginLock() || !requireCaptcha()) return;
   showModal(
     "Buat akun LaundryKu",
-    `<form id="registerForm"><div class="row g-3"><div class="col-md-6"><label class="form-label">Nama lengkap</label><input class="form-control" name="nama" maxlength="40" autocomplete="name" required></div><div class="col-md-6"><label class="form-label">Username</label><input class="form-control" name="username" maxlength="25" minlength="3" pattern="[A-Za-z0-9_]+" title="Gunakan huruf, angka, atau garis bawah" autocomplete="username" required></div><div class="col-md-6"><label class="form-label">Email</label><input class="form-control" name="email" type="email" autocomplete="email" required></div><div class="col-md-6"><label class="form-label">No. handphone</label><input class="form-control" name="no_handphone" maxlength="15" pattern="[0-9+ -]+" autocomplete="tel" required></div><div class="col-12"><label class="form-label">Alamat</label><textarea class="form-control" name="alamat" rows="2" autocomplete="street-address" required></textarea></div><div class="col-md-6"><label class="form-label">Password</label><input class="form-control" name="password" type="password" minlength="6" autocomplete="new-password" required></div><div class="col-md-6"><label class="form-label">Ulangi password</label><input class="form-control" name="confirm_password" type="password" minlength="6" autocomplete="new-password" required></div><div class="col-12"><div class="alert alert-info mb-0">Akun baru dibuat sebagai pelanggan. Hak akses pegawai diberikan secara internal oleh pengelola.</div></div><div class="col-12"><button class="btn btn-primary w-100">Buat akun</button></div></div></form>`,
+    `<form id="registerForm"><div class="row g-3"><div class="col-md-6"><label class="form-label">Nama lengkap</label><input class="form-control" name="nama" maxlength="40" autocomplete="name" required></div><div class="col-md-6"><label class="form-label">Username</label><input class="form-control" name="username" maxlength="25" minlength="3" pattern="[A-Za-z0-9_]+" title="Gunakan huruf, angka, atau garis bawah" autocomplete="username" required></div><div class="col-md-6"><label class="form-label">Email</label><input class="form-control" name="email" type="email" autocomplete="email" required></div><div class="col-md-6"><label class="form-label">No. handphone</label><input class="form-control" name="no_handphone" maxlength="15" pattern="[0-9+ -]+" autocomplete="tel" required></div><div class="col-12"><label class="form-label">Alamat</label><textarea class="form-control" name="alamat" rows="2" autocomplete="street-address" required></textarea></div><div class="col-md-6"><label class="form-label">Password</label><input class="form-control" name="password" type="password" minlength="8" autocomplete="new-password" required><div class="form-text">Minimal 8 karakter.</div></div><div class="col-md-6"><label class="form-label">Ulangi password</label><input class="form-control" name="confirm_password" type="password" minlength="8" autocomplete="new-password" required></div><div class="col-12"><div class="alert alert-info mb-0">Akun baru dibuat sebagai pelanggan. Hak akses pegawai diberikan secara internal oleh pengelola.</div></div><div class="col-12"><button class="btn btn-primary w-100">Buat akun</button></div></div></form>`,
     async (form) => {
       const values = Object.fromEntries(new FormData(form));
       if (values.password !== values.confirm_password)
@@ -262,6 +405,7 @@ $("#registerDemo").addEventListener("click", () =>
         password: values.password,
         options: {
           emailRedirectTo: `${location.origin}${location.pathname}`,
+          captchaToken: loginCaptchaToken || undefined,
           data: {
             nama: values.nama.trim(),
             username: values.username.trim(),
@@ -280,8 +424,8 @@ $("#registerDemo").addEventListener("click", () =>
       else authNotice("Akun berhasil dibuat dan Anda sudah masuk.", "success");
       toast("Akun berhasil dibuat", "success");
     },
-  ),
-);
+  );
+});
 $("#logoutBtn").addEventListener("click", async () => {
   await supabase.auth.signOut();
   $("#password").value = "";
